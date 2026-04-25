@@ -1,0 +1,114 @@
+framework: "EU AI Act"
+framework_id: "eu_ai_act_art12"
+description: >
+  Checks derivable from OpenTelemetry GenAI traces alone. Article 12 contains
+  sub-requirements that traces cannot evidence — those are listed separately
+  under not_trace_evidenceable and require artifacts outside trace data.
+
+checks:
+  - id: auto_logging
+    article: "Art. 12(1)"
+    name: "Automatic Recording of Events"
+    evidenceability: fully
+    threshold_pct: 95
+    remediation: >
+      Ensure every agent invocation starts a root span tagged with
+      agentaudit.kind=agent (or equivalent) so the audit trail begins at
+      invocation, not at the first downstream LLM call.
+
+  - id: session_timestamps
+    article: "Art. 12(3)(a)"
+    name: "Session Timestamps"
+    evidenceability: fully
+    threshold_pct: 100
+    remediation: >
+      All spans must carry tz-aware UTC start and end timestamps with
+      end >= start. Verify your tracer is not emitting spans with corrupted
+      or swapped time fields.
+
+  - id: input_recording
+    article: "Art. 12(3)(c)"
+    name: "Input Recording"
+    evidenceability: fully
+    threshold_pct: 80
+    remediation: >
+      Attach gen_ai.prompt to every LLM span. If you redact PII, redact
+      in-place rather than dropping the field, so the recording obligation
+      is met while privacy controls remain intact.
+
+  - id: operational_monitoring
+    article: "Art. 12(2)(c)"
+    name: "Operational Monitoring"
+    evidenceability: fully
+    threshold_pct: 95
+    remediation: >
+      Record gen_ai.usage.input_tokens and gen_ai.usage.output_tokens on
+      every LLM span so token consumption, cost, and latency can be
+      monitored over the system lifecycle.
+
+  - id: human_oversight_marker
+    article: "Art. 14"
+    name: "Human Oversight Markers"
+    evidenceability: partially
+    threshold_pct: 50
+    remediation: >
+      Emit explicit spans tagged agentaudit.kind=oversight for human review
+      points (approvals, rejections, escalations). Trace data alone cannot
+      prove that meaningful human oversight occurred — only that an oversight
+      step was marked.
+
+  - id: log_retention
+    article: "Art. 26(6)"
+    name: "Log Retention Policy"
+    evidenceability: partially
+    threshold_days: 180
+    remediation: >
+      Declare a retention policy of at least 180 days via --retention-days.
+      Trace contents cannot evidence how long logs are retained; this check
+      verifies the declared policy meets the regulatory minimum.
+
+  - id: incident_reporting
+    article: "Art. 73"
+    name: "Serious Incident Reporting"
+    evidenceability: partially
+    threshold_pct: 100
+    remediation: >
+      When an error occurs, attach a structured exception.type attribute
+      (in addition to exception.message) so incidents can be classified
+      and reported under Article 73 within the required timelines.
+
+not_trace_evidenceable:
+  - article: "Art. 12(2)(a)"
+    name: "Risk Management System Records"
+    needs: >
+      Risk assessment documentation maintained outside the trace pipeline.
+
+  - article: "Art. 12(2)(b)"
+    name: "Post-Market Monitoring"
+    needs: >
+      Monitoring plan, feedback intake procedures, and remediation records
+      maintained as organizational artifacts.
+
+  - article: "Art. 12(3)(b)"
+    name: "Identification of Natural Persons for Verification"
+    needs: >
+      Identity verification records tied to specific deployed high-risk
+      systems, kept outside operational trace data.
+
+  - article: "EN 18229-1"
+    name: "Component Identification"
+    needs: >
+      Hardware and software component registry with versioned identifiers,
+      independent of runtime tracing.
+
+  - article: "Art. 11 / Annex IV"
+    name: "Technical Documentation"
+    needs: >
+      Technical documentation package covering system design, training data
+      methodology, and validation, maintained separately from operational logs.
+
+  - article: "Art. 17"
+    name: "Quality Management System"
+    needs: >
+      QMS documentation including testing procedures, change control,
+      and release management.
