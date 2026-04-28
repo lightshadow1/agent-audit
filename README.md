@@ -16,18 +16,26 @@ Deliberately narrow:
 ## Quick start
 
 ```bash
-git clone <this repo>
-cd agent-audit
-uv sync --extra dev
+pip install ai-agent-audit
 
-export ANTHROPIC_API_KEY=sk-ant-...    # only needed to regenerate the example fixture
-uv run agentaudit report tests/fixtures/otel_pass.jsonl \
+agentaudit report your-traces.jsonl \
   --retention-days 365 \
   --out report.html
 open report.html
 ```
 
-Already have OTel traces from your own agent (Langfuse, Laminar, OpenLLMetry, plain OTLP exporter)? Skip the example and point `agentaudit report` at your JSONL.
+Already have OTel traces from your own agent (Langfuse, Laminar, OpenLLMetry, plain OTLP exporter)? Point `agentaudit report` at your JSONL.
+
+### From source
+
+```bash
+git clone https://github.com/lightshadow1/agent-audit.git
+cd agent-audit
+uv sync --extra dev
+uv run agentaudit report tests/fixtures/otel_pass.jsonl \
+  --retention-days 365 \
+  --out report.html
+```
 
 ## What gets checked
 
@@ -67,7 +75,7 @@ Run any of them through `agentaudit report` to see how the same logic surfaces d
 ## CLI
 
 ```
-uv run agentaudit report <input.jsonl> [options]
+agentaudit report <input.jsonl> [options]
 
 Options:
   --source otel              Trace source (only otel in v1)

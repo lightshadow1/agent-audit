@@ -82,7 +82,7 @@ jobs:
     needs: [build]
     environment:
       name: test-pypi
-      url: https://test.pypi.org/p/agentaudit
+      url: https://test.pypi.org/p/ai-agent-audit
     steps:
       - name: Download build artifacts
         uses: actions/download-artifact@v4
@@ -104,7 +104,7 @@ jobs:
     needs: [publish-test]
     environment:
       name: pypi
-      url: https://pypi.org/p/agentaudit
+      url: https://pypi.org/p/ai-agent-audit
     steps:
       - name: Download build artifacts
         uses: actions/download-artifact@v4
