@@ -35,9 +35,7 @@ def test_each_trace_has_agent_llm_and_oversight_spans(traces: list[Trace]) -> No
         kinds = {s.kind for s in t.spans}
         assert SpanKind.agent in kinds, f"trace {t.trace_id} missing agent span"
         assert SpanKind.llm in kinds, f"trace {t.trace_id} missing llm span"
-        assert SpanKind.oversight in kinds, (
-            f"trace {t.trace_id} missing oversight span"
-        )
+        assert SpanKind.oversight in kinds, f"trace {t.trace_id} missing oversight span"
 
 
 def test_llm_spans_carry_gen_ai_attributes(traces: list[Trace]) -> None:

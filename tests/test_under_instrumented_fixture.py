@@ -30,10 +30,7 @@ def test_fixture_has_only_llm_spans() -> None:
 
 
 def test_assessment_surfaces_expected_gaps() -> None:
-    results = {
-        r.check_id: r
-        for r in assess(load(FIXTURE), retention_days=365)
-    }
+    results = {r.check_id: r for r in assess(load(FIXTURE), retention_days=365)}
 
     # No agent-root spans → auto_logging fails decisively.
     assert results["auto_logging"].status is CheckStatus.not_met

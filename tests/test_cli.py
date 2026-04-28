@@ -150,9 +150,7 @@ def test_report_missing_input_exits_two(tmp_path: Path) -> None:
 
 
 @pytest.mark.parametrize("fixture", [PASS, FAIL, UNDER])
-def test_report_works_on_all_example_fixtures(
-    fixture: Path, tmp_path: Path
-) -> None:
+def test_report_works_on_all_example_fixtures(fixture: Path, tmp_path: Path) -> None:
     """Every shipped example fixture should run end-to-end and produce HTML."""
     out = tmp_path / f"{fixture.stem}.html"
     result = runner.invoke(

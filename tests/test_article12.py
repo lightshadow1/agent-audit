@@ -27,6 +27,7 @@ def fail_results() -> dict:
 
 # --- Pass fixture: well-instrumented traces should clear every trace-derived check.
 
+
 @pytest.mark.parametrize(
     "check_id",
     [
@@ -57,6 +58,7 @@ def test_pass_incident_reporting_is_not_evidenced(pass_results: dict) -> None:
 
 # --- Fail fixture: each mutation produces a specific status downgrade.
 
+
 @pytest.mark.parametrize(
     "check_id, expected_status",
     [
@@ -86,11 +88,16 @@ def test_fail_fixture_status(
 def test_fail_fixture_results_carry_remediation(fail_results: dict) -> None:
     for check_id, r in fail_results.items():
         if r.status in (CheckStatus.not_met, CheckStatus.partial):
-            assert r.remediation, f"{check_id}: missing remediation when status={r.status.value}"
-            assert r.gap, f"{check_id}: missing gap description when status={r.status.value}"
+            assert r.remediation, (
+                f"{check_id}: missing remediation when status={r.status.value}"
+            )
+            assert r.gap, (
+                f"{check_id}: missing gap description when status={r.status.value}"
+            )
 
 
 # --- Log retention: parametrized policy values, no traces required.
+
 
 @pytest.mark.parametrize(
     "days, expected",
@@ -111,6 +118,7 @@ def test_log_retention_thresholds(days: int | None, expected: CheckStatus) -> No
 
 # --- Empty input: every check that needs traces should return not_evidenced.
 
+
 def test_empty_traces_yield_not_evidenced() -> None:
     results = {r.check_id: r for r in assess([], retention_days=None)}
     expected_not_evidenced = [
@@ -129,6 +137,7 @@ def test_empty_traces_yield_not_evidenced() -> None:
 
 
 # --- Evidenceability tags must match the YAML rule definitions.
+
 
 def test_evidenceability_tags(pass_results: dict) -> None:
     expected = {

@@ -60,7 +60,9 @@ def test_html_has_required_sections(pass_html: str) -> None:
 def test_html_renders_status_badges(pass_html: str, fail_html: str) -> None:
     assert "badge-met" in pass_html
     assert "badge-not_met" in fail_html
-    assert "badge-not_evidenced" in pass_html  # incident_reporting in pass is not_evidenced
+    assert (
+        "badge-not_evidenced" in pass_html
+    )  # incident_reporting in pass is not_evidenced
 
 
 def test_html_renders_evidenceability_tags(pass_html: str) -> None:
