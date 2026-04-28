@@ -8,7 +8,6 @@ on:
 
 permissions:
   contents: read
-  id-token: write  # Required for PyPI trusted publishing (no API tokens needed)
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
@@ -76,32 +75,10 @@ jobs:
           path: dist/*
           if-no-files-found: error
 
-  # ── Publish to Test PyPI first (catches metadata issues early) ──
-  publish-test:
-    runs-on: ubuntu-latest
-    needs: [build]
-    environment:
-      name: test-pypi
-      url: https://test.pypi.org/p/ai-agent-audit
-    steps:
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: dist
-          path: dist/
-
-      - name: Publish to Test PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          repository-url: https://test.pypi.org/legacy/
-          # Uses OIDC trusted publishing — no tokens needed.
-          # Set up at: https://test.pypi.org/manage/account/publishing/
-          skip-existing: true
-
   # ── Publish to Production PyPI ──
   publish-prod:
     runs-on: ubuntu-latest
-    needs: [publish-test]
+    needs: [build]
     environment:
       name: pypi
       url: https://pypi.org/p/ai-agent-audit
@@ -114,5 +91,5 @@ jobs:
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
-        # Uses OIDC trusted publishing — no tokens needed.
-        # Set up at: https://pypi.org/manage/account/publishing/
+        with:
+          password: ${{ secrets.PYPI_TOKEN }}
