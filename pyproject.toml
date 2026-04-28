@@ -1,6 +1,6 @@
 [project]
 name = "ai-agent-audit"
-version = "0.1.0a1"
+version = "0.1.0"
 description = "OpenTelemetry GenAI traces → EU AI Act Article 12 evidence reports"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -8,7 +8,7 @@ license = { text = "Apache-2.0" }
 authors = [{ name = "Will Suriaputra" }]
 keywords = ["ai", "compliance", "eu-ai-act", "opentelemetry", "audit", "article-12", "observability"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Intended Audience :: Legal Industry",
     "License :: OSI Approved :: Apache Software License",
