@@ -1,0 +1,101 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install 3.11
+
+      - name: Lint with ruff
+        run: |
+          uv run --extra dev ruff check src/ tests/
+          uv run --extra dev ruff format --check src/ tests/
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - name: Set up Python ${{ matrix.python-version }}
+        run: uv python install ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: uv sync --extra dev
+
+      - name: Run tests
+        run: uv run pytest -v --tb=short
+
+  build:
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install 3.11
+
+      - name: Build wheel and sdist
+        run: uv build
+
+      - name: Verify wheel installs cleanly
+        run: |
+          uv venv /tmp/verify-env
+          uv pip install dist/*.whl --python /tmp/verify-env/bin/python
+          /tmp/verify-env/bin/agentaudit version
+
+      - name: Generate sample report
+        run: |
+          mkdir -p artifacts
+          uv sync
+          uv run agentaudit report tests/fixtures/otel_pass.jsonl \
+            --retention-days 180 \
+            --out artifacts/report.html \
+            --json artifacts/report.json \
+            --quiet
+
+      - name: Upload distribution
+        uses: actions/upload-artifact@v4
+        with:
+          name: agentaudit-dist
+          path: dist/*
+          if-no-files-found: error
+
+      - name: Upload sample report
+        uses: actions/upload-artifact@v4
+        with:
+          name: agentaudit-sample-report
+          path: artifacts/*
+          if-no-files-found: error
