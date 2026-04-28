@@ -13,6 +13,10 @@ Deliberately narrow:
 - **One input**: OpenTelemetry GenAI semantic conventions (JSONL)
 - **One output**: a single self-contained HTML file
 
+![Terminal output](docs/terminal-output.png)
+
+![Report preview](docs/report-preview.png)
+
 ## Quick start
 
 ```bash
