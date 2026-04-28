@@ -121,7 +121,11 @@ def _session_timestamps(traces: list[Trace]) -> CheckResult:
     if bad:
         evidence.append("Violations: " + "; ".join(bad[:3]))
 
-    gap = None if status is CheckStatus.met else f"{len(bad)} span(s) have end_time < start_time"
+    gap = (
+        None
+        if status is CheckStatus.met
+        else f"{len(bad)} span(s) have end_time < start_time"
+    )
     return _build(rule, status, evidence, gap)
 
 
@@ -157,7 +161,9 @@ def _operational_monitoring(traces: list[Trace]) -> CheckResult:
         return _no_data(rule, "no LLM spans found")
 
     with_tokens = [
-        s for s in llm_spans if s.input_tokens is not None and s.output_tokens is not None
+        s
+        for s in llm_spans
+        if s.input_tokens is not None and s.output_tokens is not None
     ]
     rate = len(with_tokens) / len(llm_spans)
     status = _status_from_pct(rate, rule["threshold_pct"])
