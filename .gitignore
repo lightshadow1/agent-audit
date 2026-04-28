@@ -34,3 +34,10 @@ env/
 /reports/
 /demo-reports/
 /tmp/
+
+# Internal planning docs and sample outputs (not for public OSS repo)
+agentaudit-claude-code-prompt.md
+agentaudit-v1-plan.md
+agentaudit-mvp-spec.md
+agentaudit-compliance-report.html
+agentaudit-compliance-report.pdf
